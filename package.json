@@ -1,0 +1,281 @@
+{
+  "name": "buttonbar",
+  "displayName": "ButtonBar",
+  "description": "Botões na barra de status com ações configuráveis: terminal, comando do editor ou link.",
+  "version": "0.0.1",
+  "publisher": "carlosemannoel",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CarlosEmannoel16/buttonbar"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "statusbar",
+    "buttons",
+    "terminal",
+    "tasks"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "buttonbar.openSettings",
+        "title": "Abrir configurações dos botões",
+        "category": "ButtonBar"
+      },
+      {
+        "command": "buttonbar.reload",
+        "title": "Recarregar botões",
+        "category": "ButtonBar"
+      }
+    ],
+    "configuration": {
+      "id": "buttonbar",
+      "title": "ButtonBar",
+      "properties": {
+        "buttonbar.buttons": {
+          "type": "array",
+          "scope": "window",
+          "restricted": true,
+          "default": [],
+          "description": "Botões exibidos na barra de status.",
+          "markdownDescription": "Botões exibidos na barra de status. Cada item precisa de `text` e `action`. O texto aceita codicons, como `$(play) Testes`.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "text",
+              "action"
+            ],
+            "defaultSnippets": [
+              {
+                "label": "Terminal",
+                "description": "Roda um comando no terminal integrado",
+                "body": {
+                  "text": "$(play) Run",
+                  "tooltip": "Roda o comando no terminal",
+                  "alignment": "left",
+                  "priority": 100,
+                  "action": {
+                    "type": "terminal",
+                    "command": "npm test",
+                    "name": "ButtonBar",
+                    "reuse": true,
+                    "focus": true
+                  }
+                }
+              },
+              {
+                "label": "Comando",
+                "description": "Executa um comando do Cursor ou do VS Code",
+                "body": {
+                  "text": "$(gear) Comando",
+                  "alignment": "left",
+                  "priority": 50,
+                  "action": {
+                    "type": "command",
+                    "command": "workbench.action.selectTheme",
+                    "args": []
+                  }
+                }
+              },
+              {
+                "label": "Link",
+                "description": "Abre um link no navegador",
+                "body": {
+                  "text": "$(link-external) Link",
+                  "alignment": "right",
+                  "priority": 0,
+                  "action": {
+                    "type": "url",
+                    "url": "https://code.visualstudio.com/api"
+                  }
+                }
+              }
+            ],
+            "properties": {
+              "text": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Texto do botão. Aceita codicons, por exemplo $(play) Testes."
+              },
+              "tooltip": {
+                "type": "string",
+                "description": "Dica ao passar o mouse."
+              },
+              "color": {
+                "type": "string",
+                "description": "Cor do texto: hexadecimal (#89d185) ou id de cor do tema (statusBarItem.warningForeground)."
+              },
+              "alignment": {
+                "type": "string",
+                "enum": [
+                  "left",
+                  "right"
+                ],
+                "enumDescriptions": [
+                  "Lado esquerdo da barra de status.",
+                  "Lado direito da barra de status."
+                ],
+                "default": "left",
+                "description": "Lado da barra de status. O padrão é left."
+              },
+              "priority": {
+                "type": "number",
+                "default": 0,
+                "description": "Prioridade. Quanto maior o número, mais à esquerda o botão aparece."
+              },
+              "confirm": {
+                "description": "Pede confirmação antes de executar. Use true para a pergunta padrão, ou um texto para uma pergunta personalizada.",
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "string",
+                    "minLength": 1
+                  }
+                ]
+              },
+              "action": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "type"
+                ],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": [
+                      "terminal",
+                      "command",
+                      "url"
+                    ],
+                    "enumDescriptions": [
+                      "Roda um comando no terminal integrado.",
+                      "Executa um comando do Cursor ou do VS Code.",
+                      "Abre um link no navegador."
+                    ],
+                    "description": "Tipo da ação."
+                  },
+                  "command": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Comando de shell (type terminal) ou id de comando do editor (type command)."
+                  },
+                  "args": {
+                    "type": "array",
+                    "description": "Argumentos do comando do editor. Se o comando espera um objeto, coloque esse objeto como primeiro item.",
+                    "items": {}
+                  },
+                  "url": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "Endereço http ou https aberto no navegador."
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "Nome do terminal integrado. Usado para reutilizar um terminal já aberto."
+                  },
+                  "reuse": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Reutiliza um terminal aberto com o mesmo nome. O padrão é true."
+                  },
+                  "cwd": {
+                    "type": "string",
+                    "description": "Pasta onde o comando roda. O padrão é a pasta do projeto. Vale quando o terminal é criado."
+                  },
+                  "focus": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Leva o foco para o terminal. false mostra o terminal e deixa o cursor no editor. O padrão é true."
+                  }
+                },
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "type": {
+                          "const": "terminal"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ]
+                    },
+                    "then": {
+                      "required": [
+                        "command"
+                      ]
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "type": {
+                          "const": "command"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ]
+                    },
+                    "then": {
+                      "required": [
+                        "command"
+                      ]
+                    }
+                  },
+                  {
+                    "if": {
+                      "properties": {
+                        "type": {
+                          "const": "url"
+                        }
+                      },
+                      "required": [
+                        "type"
+                      ]
+                    },
+                    "then": {
+                      "required": [
+                        "url"
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p . && tsc -p tsconfig.test.json",
+    "watch": "tsc -p . --watch",
+    "lint": "eslint .",
+    "test": "node --import tsx --test --test-reporter spec test/*.test.ts",
+    "package": "vsce package -o buttonbar-0.0.1.vsix",
+    "vscode:prepublish": "tsc -p ."
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/vscode": "1.85.0",
+    "@vscode/vsce": "^3.6.0",
+    "eslint": "^9.14.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.14.0"
+  }
+}

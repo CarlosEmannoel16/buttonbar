@@ -1,0 +1,14 @@
+# Excluded from the VSIX. The compiled out/ directory is packaged.
+.vscode/**
+src/**
+test/**
+node_modules/**
+.gitignore
+.eslintcache
+eslint.config.mjs
+tsconfig.json
+tsconfig.test.json
+package-lock.json
+**/*.map
+**/*.ts
+**/*.vsix
